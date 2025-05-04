@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "1006948978372",
+    "project_id": "geopaws-eaf88",
+    "storage_bucket": "geopaws-eaf88.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1006948978372:android:9bad4139215e466ac8c391",
+        "android_client_info": {
+          "package_name": "com.example.geopaws"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1006948978372-st7fi7iv5l8kgb0coiqgeoa40eid3ul6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_4XuygsUNR-Xlc4nhqNNaGVa7ZZqJ260"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1006948978372-st7fi7iv5l8kgb0coiqgeoa40eid3ul6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1006948978372-83pak854e3tlc8ge2ijkut2nqgqlitav.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.geopaws"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1006948978372:android:e43f128a3febda0fc8c391",
+        "android_client_info": {
+          "package_name": "com.example.geopawsfinal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1006948978372-d77ahikdofnflda2o1i7n03bomhu1qk7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.geopawsfinal",
+            "certificate_hash": "3c72edb8bf424beec9781f7a25f0ba26f3dc441a"
+          }
+        },
+        {
+          "client_id": "1006948978372-st7fi7iv5l8kgb0coiqgeoa40eid3ul6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_4XuygsUNR-Xlc4nhqNNaGVa7ZZqJ260"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1006948978372-st7fi7iv5l8kgb0coiqgeoa40eid3ul6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1006948978372-83pak854e3tlc8ge2ijkut2nqgqlitav.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.geopaws"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

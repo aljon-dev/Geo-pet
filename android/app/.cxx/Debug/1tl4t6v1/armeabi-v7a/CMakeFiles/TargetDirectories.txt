@@ -1,0 +1,2 @@
+D:/geopaws-master/android/app/.cxx/Debug/1tl4t6v1/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/geopaws-master/android/app/.cxx/Debug/1tl4t6v1/armeabi-v7a/CMakeFiles/rebuild_cache.dir

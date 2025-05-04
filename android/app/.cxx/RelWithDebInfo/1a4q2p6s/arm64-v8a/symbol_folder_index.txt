@@ -1,0 +1,1 @@
+D:\geopaws-master\build\app\intermediates\cxx\RelWithDebInfo\1a4q2p6s\obj\arm64-v8a

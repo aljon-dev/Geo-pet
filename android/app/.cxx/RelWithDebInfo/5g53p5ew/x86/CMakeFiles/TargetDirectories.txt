@@ -1,0 +1,2 @@
+D:/geopaws-master/android/app/.cxx/RelWithDebInfo/5g53p5ew/x86/CMakeFiles/edit_cache.dir
+D:/geopaws-master/android/app/.cxx/RelWithDebInfo/5g53p5ew/x86/CMakeFiles/rebuild_cache.dir

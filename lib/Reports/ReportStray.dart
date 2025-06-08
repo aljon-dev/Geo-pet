@@ -112,6 +112,7 @@ class _StrayAnimalReportFormState extends State<StrayAnimalReportForm> {
         'imageUrls': imageUrls,
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
+        'status': 'pending',
       };
 
       // Send to Firestore
@@ -212,7 +213,7 @@ class _StrayAnimalReportFormState extends State<StrayAnimalReportForm> {
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 16),
-              _buildAnimalTypeSelection(),
+              _buildPetTypeSelection(),
               const SizedBox(height: 16),
               _buildRequiredTextField(
                 'Breed (if known or mixed)',
@@ -421,62 +422,65 @@ class _StrayAnimalReportFormState extends State<StrayAnimalReportForm> {
     );
   }
 
-  Widget _buildAnimalTypeSelection() {
+  Widget _buildPetTypeSelection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Type of Animal: *',
+          'Type of Pet: *',
           style: TextStyle(fontSize: 16, color: Colors.blue),
         ),
         const SizedBox(height: 8),
         Row(
           children: [
-            Expanded(
-              child: CheckboxListTile(
-                title: const Text('Dog'),
-                value: _animalType.contains('Dog'),
-                onChanged: (bool? value) {
-                  setState(() {
-                    if (value == true) {
-                      if (_animalType == 'Cat') {
-                        _animalType = 'Both';
-                      } else {
-                        _animalType = 'Dog';
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Checkbox(
+                  value: _animalType.contains('Dog'),
+                  onChanged: (bool? value) {
+                    setState(() {
+                      if (value == true) {
+                        _animalType = 'Dog'; // Fixed: was _petType == 'Dog'
                       }
-                    } else {
-                      if (_animalType == 'Both') {
-                        _animalType = 'Cat';
-                      } else {
-                        _animalType = '';
-                      }
-                    }
-                  });
-                },
-              ),
+                    });
+                  },
+                ),
+                const Text('Dog'),
+              ],
             ),
-            Expanded(
-              child: CheckboxListTile(
-                title: const Text('Cat'),
-                value: _animalType.contains('Cat'),
-                onChanged: (bool? value) {
-                  setState(() {
-                    if (value == true) {
-                      if (_animalType == 'Dog') {
-                        _animalType = 'Both';
-                      } else {
-                        _animalType = 'Cat';
+            const SizedBox(width: 20),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Checkbox(
+                  value: _animalType.contains('Cat'),
+                  onChanged: (bool? value) {
+                    setState(() {
+                      if (value == true) {
+                        _animalType = 'Cat'; // Fixed: was _petType == 'Cat'
                       }
-                    } else {
-                      if (_animalType == 'Both') {
-                        _animalType = 'Dog';
-                      } else {
-                        _animalType = '';
+                    });
+                  },
+                ),
+                const Text('Cat'),
+              ],
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Checkbox(
+                  value: _animalType.contains('Both'),
+                  onChanged: (bool? value) {
+                    setState(() {
+                      if (value == true) {
+                        _animalType = 'Both'; // Fixed: was _petType == 'Both'
                       }
-                    }
-                  });
-                },
-              ),
+                    });
+                  },
+                ),
+                const Text('Both'),
+              ],
             ),
           ],
         ),

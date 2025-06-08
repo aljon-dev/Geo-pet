@@ -73,9 +73,7 @@ class _MissingPetReportFormState extends State<MissingPetReportForm> {
           }
         }
 
-        // Prepare report data
         Map<String, dynamic> reportData = {
-          // Basic Info
           'reportDate': _reportDate != null ? Timestamp.fromDate(_reportDate!) : Timestamp.now(),
           'missingDate': _missingDate != null ? Timestamp.fromDate(_missingDate!) : null,
           'lastSeenTime': _lastSeenTime != null
@@ -84,8 +82,6 @@ class _MissingPetReportFormState extends State<MissingPetReportForm> {
                   'minute': _lastSeenTime!.minute,
                 }
               : null,
-
-          // Pet Details
           'numberOfPets': int.tryParse(_numberOfPetsController.text) ?? 1,
           'petNames': _petNamesController.text.trim(),
           'petType': _petType,
@@ -94,22 +90,16 @@ class _MissingPetReportFormState extends State<MissingPetReportForm> {
           'size': _size,
           'colorMarkings': _colorMarkingsController.text.trim(),
           'age': _ageController.text.trim(),
-
-          // Additional Details
           'circumstances': _circumstancesController.text.trim(),
           'wearingCollar': _wearingCollar,
           'collarDescription': _collarDescriptionController.text.trim(),
           'temperament': _temperament,
           'medicalConditions': _medicalConditionsController.text.trim(),
-
-          // Images
           'imageUrls': imageUrls,
           'imageCount': imageUrls.length,
-
-          // Metadata
           'createdAt': Timestamp.now(),
-          'status': 'active', // active, found, closed
-          'reportId': null, // Will be set after document creation
+          'status': 'pending',
+          'reportId': null,
         };
 
         DocumentReference docRef = await FirebaseFirestore.instance.collection('pet_reports').add(reportData);
@@ -406,17 +396,7 @@ class _MissingPetReportFormState extends State<MissingPetReportForm> {
                   onChanged: (bool? value) {
                     setState(() {
                       if (value == true) {
-                        if (_petType == 'Cat') {
-                          _petType = 'Both';
-                        } else {
-                          _petType = 'Dog';
-                        }
-                      } else {
-                        if (_petType == 'Both') {
-                          _petType = 'Cat';
-                        } else {
-                          _petType = '';
-                        }
+                        _petType = 'Dog'; // Fixed: was _petType == 'Dog'
                       }
                     });
                   },
@@ -433,22 +413,28 @@ class _MissingPetReportFormState extends State<MissingPetReportForm> {
                   onChanged: (bool? value) {
                     setState(() {
                       if (value == true) {
-                        if (_petType == 'Dog') {
-                          _petType = 'Both';
-                        } else {
-                          _petType = 'Cat';
-                        }
-                      } else {
-                        if (_petType == 'Both') {
-                          _petType = 'Dog';
-                        } else {
-                          _petType = '';
-                        }
+                        _petType = 'Cat';
                       }
                     });
                   },
                 ),
                 const Text('Cat'),
+              ],
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Checkbox(
+                  value: _petType.contains('Both'),
+                  onChanged: (bool? value) {
+                    setState(() {
+                      if (value == true) {
+                        _petType = 'Both';
+                      }
+                    });
+                  },
+                ),
+                const Text('Both'),
               ],
             ),
           ],

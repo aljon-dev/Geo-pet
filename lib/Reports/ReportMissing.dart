@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -14,6 +15,8 @@ class MissingPetReportForm extends StatefulWidget {
 class _MissingPetReportFormState extends State<MissingPetReportForm> {
   final _formKey = GlobalKey<FormState>();
   final ImagePicker _picker = ImagePicker();
+
+  final _auth = FirebaseAuth.instance;
 
   // Form Controllers
   final TextEditingController _numberOfPetsController = TextEditingController();
@@ -100,6 +103,7 @@ class _MissingPetReportFormState extends State<MissingPetReportForm> {
           'createdAt': Timestamp.now(),
           'status': 'pending',
           'reportId': null,
+          'userid': _auth.currentUser!.uid,
         };
 
         DocumentReference docRef = await FirebaseFirestore.instance.collection('pet_reports').add(reportData);
@@ -114,6 +118,8 @@ class _MissingPetReportFormState extends State<MissingPetReportForm> {
             backgroundColor: Colors.green,
           ),
         );
+
+        Navigator.of(context, rootNavigator: true).pop();
 
         // Clear form or navigate away
         _clearForm();

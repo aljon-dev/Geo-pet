@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,6 +13,8 @@ class StrayAnimalReportForm extends StatefulWidget {
 }
 
 class _StrayAnimalReportFormState extends State<StrayAnimalReportForm> {
+  final _auth = FirebaseAuth.instance;
+
   final _formKey = GlobalKey<FormState>();
   final ImagePicker _picker = ImagePicker();
 
@@ -70,13 +73,21 @@ class _StrayAnimalReportFormState extends State<StrayAnimalReportForm> {
         return;
       }
 
-      // Show loading
+      // Show loading dialog FIRST
       showDialog(
         context: context,
-        barrierDismissible: false,
-        builder: (context) => Center(
-          child: CircularProgressIndicator(),
-        ),
+        barrierDismissible: false, // Prevent user from dismissing
+        builder: (BuildContext context) {
+          return const AlertDialog(
+            content: Row(
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(width: 20),
+                Text("Submitting report..."),
+              ],
+            ),
+          );
+        },
       );
 
       // Fix the behavior list logic
@@ -113,13 +124,13 @@ class _StrayAnimalReportFormState extends State<StrayAnimalReportForm> {
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
         'status': 'pending',
+        'userid': _auth.currentUser!.uid,
       };
 
       // Send to Firestore
       DocumentReference docRef = await FirebaseFirestore.instance.collection('animal_reports').add(reportData);
 
-      // Close loading dialog
-      Navigator.of(context).pop();
+      Navigator.of(context, rootNavigator: true).pop();
 
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
@@ -135,10 +146,8 @@ class _StrayAnimalReportFormState extends State<StrayAnimalReportForm> {
       // Optional: Clear form after successful submission
       _clearForm();
     } catch (e) {
-      // Close loading dialog if open
-      if (Navigator.canPop(context)) {
-        Navigator.of(context).pop();
-      }
+      // Close loading dialog if it's open
+      Navigator.of(context).pop();
 
       // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
@@ -149,7 +158,7 @@ class _StrayAnimalReportFormState extends State<StrayAnimalReportForm> {
         ),
       );
 
-      print('Error in SendReportStary: $e');
+      print('Error in SendReportStray: $e');
     }
   }
 

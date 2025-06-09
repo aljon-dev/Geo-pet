@@ -76,6 +76,22 @@ class _MissingPetReportFormState extends State<MissingPetReportForm> {
           }
         }
 
+        showDialog(
+          context: context,
+          barrierDismissible: false, // Prevent user from dismissing
+          builder: (BuildContext context) {
+            return const AlertDialog(
+              content: Row(
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(width: 20),
+                  Text("Submitting report..."),
+                ],
+              ),
+            );
+          },
+        );
+
         Map<String, dynamic> reportData = {
           'reportDate': _reportDate != null ? Timestamp.fromDate(_reportDate!) : Timestamp.now(),
           'missingDate': _missingDate != null ? Timestamp.fromDate(_missingDate!) : null,

@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:geopawsfinal/petprofile.dart';
+import 'package:intl/intl.dart';
 import 'package:geopawsfinal/view_approved.dart';
 import 'package:geopawsfinal/view_request.dart';
 
@@ -33,14 +34,10 @@ class _WelcomePage extends State<WelcomePage> {
     try {
       var user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-            .collection('users')
-            .where('uid', isEqualTo: user.uid)
-            .get();
+        QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('users').where('uid', isEqualTo: user.uid).get();
 
         if (querySnapshot.docs.isNotEmpty) {
-          var userData =
-              querySnapshot.docs.first.data() as Map<String, dynamic>?;
+          var userData = querySnapshot.docs.first.data() as Map<String, dynamic>?;
 
           if (userData != null) {
             setState(() {
@@ -77,8 +74,7 @@ class _WelcomePage extends State<WelcomePage> {
               const SizedBox(height: 20),
               Text(
                 fullname,
-                style:
-                    const TextStyle(fontWeight: FontWeight.w700, fontSize: 30),
+                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 30),
               ),
               const SizedBox(height: 10),
               _buildCarouselSlider(),
@@ -91,9 +87,12 @@ class _WelcomePage extends State<WelcomePage> {
               const SizedBox(height: 10),
               _buildRequestSectionStatus('Approved', 'Disapproved'),
               const SizedBox(height: 20),
-              _sectionHeader('Rescue'),
+              _sectionHeader('Stray'),
               const SizedBox(height: 10),
               _buildReportsSection(),
+              _sectionHeader('Missing'),
+              const SizedBox(height: 10),
+              _buildReportsSection2(),
               const SizedBox(height: 30),
             ],
           ),
@@ -152,16 +151,14 @@ class _WelcomePage extends State<WelcomePage> {
                           alignment: Alignment.centerLeft,
                           child: Text(
                             item['text']!,
-                            style: const TextStyle(
-                                fontSize: 22, fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                           ),
                         ),
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
                             item['text2']!,
-                            style: const TextStyle(
-                                fontSize: 22, fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
@@ -185,11 +182,7 @@ class _WelcomePage extends State<WelcomePage> {
 
   Widget _buildRequestSection(String status) {
     return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('request_form')
-          .where('status', isEqualTo: status)
-          .where('user_id', isEqualTo: user!.uid)
-          .snapshots(),
+      stream: FirebaseFirestore.instance.collection('request_form').where('status', isEqualTo: status).where('user_id', isEqualTo: user!.uid).snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -227,11 +220,7 @@ class _WelcomePage extends State<WelcomePage> {
 
   Widget _buildRequestSectionStatus(String status, String status2) {
     return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('request_form')
-          .where('status', whereIn: [status, status2])
-          .where('user_id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-          .snapshots(),
+      stream: FirebaseFirestore.instance.collection('request_form').where('status', whereIn: [status, status2]).where('user_id', isEqualTo: FirebaseAuth.instance.currentUser!.uid).snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -260,16 +249,14 @@ class _WelcomePage extends State<WelcomePage> {
             final uid = data['user_id'];
             final docId = data.id;
 
-            return _buildRequestCard(
-                data, fullname, petId, uid, docId, data['status']);
+            return _buildRequestCard(data, fullname, petId, uid, docId, data['status']);
           },
         );
       },
     );
   }
 
-  Widget _buildRequestCard(dynamic data, String fullname, String petId,
-      String uid, String docId, String status) {
+  Widget _buildRequestCard(dynamic data, String fullname, String petId, String uid, String docId, String status) {
     return Container(
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.all(10),
@@ -353,10 +340,8 @@ class _WelcomePage extends State<WelcomePage> {
   Widget _buildReportsSection() {
     return StreamBuilder(
       stream: FirebaseFirestore.instance
-          .collection('reports')
-          .where('email',
-              isEqualTo: FirebaseAuth
-                  .instance.currentUser!.email) // Match logged-in user's email
+          .collection('pet_reports')
+          .where('userid', isEqualTo: FirebaseAuth.instance.currentUser!.uid) // Match logged-in user's email
           .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -383,10 +368,54 @@ class _WelcomePage extends State<WelcomePage> {
             final report = reportData[index];
 
             final status = report['status'] ?? 'Unknown Status';
-            final date = report['dateTimeSpotted'] ?? 'Unknown Date';
-            final type = report['report_type'] ?? 'None';
-            final location = report['location'] ?? 'Unknown Location';
-            final image = report['photoUrl'] ?? '';
+            final date = report['missingDate'] != null ? DateFormat('MMM dd, yyyy \'at\' h:mm a').format(report['missingDate'].toDate()) : 'Unknown Date';
+
+            final type = report['petType'] ?? 'Unknown';
+            final location = 'Barangay: Pacita 1.  City of San Pedro, Laguna';
+            final image = report['imageUrls'][0] ?? '';
+
+            return _buildReportCard(type, date, status, location, image);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildReportsSection2() {
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance
+          .collection('animal_reports')
+          .where('userid', isEqualTo: FirebaseAuth.instance.currentUser!.uid) // Match logged-in user's email
+          .snapshots(),
+      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const Center(
+            child: Text('No reports available'),
+          );
+        }
+        final reportData = snapshot.data!.docs;
+        if (reportData.isEmpty) {
+          return const Center(
+            child: Text('No reports submitted by you'),
+          );
+        }
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: reportData.length,
+          itemBuilder: (context, index) {
+            final report = reportData[index];
+
+            final status = report['status'] ?? 'Unknown Status';
+            final date = report['createdAt'] != null ? DateFormat('MMMM d, yyyy \'at\' h:mm:ss a ').format(report['createdAt'].toDate()) : 'Unknown Date';
+            final type = report['animalType'] == 'Both' ? 'Cat And Dog ' : report['animalType'];
+            final location = 'Barangay: Pacita 1.  City of San Pedro, Laguna';
+            final image = report['imageUrls'][0] ?? '';
 
             return _buildReportCard(type, date, status, location, image);
           },
@@ -455,8 +484,7 @@ class _WelcomePage extends State<WelcomePage> {
                 Text(
                   'Status: $status',
                   style: TextStyle(
-                    color:
-                        status == 'In Progress' ? Colors.orange : Colors.green,
+                    color: status == 'pending'.toLowerCase() ? Colors.orange : Colors.green,
                   ),
                 ),
               ],
